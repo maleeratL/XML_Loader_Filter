@@ -49,4 +49,46 @@ public class AccessDB {
 		return result;
 	}
 	
+	
+	public boolean savePlayerInSQL(Player p) {
+		boolean result= false;
+		try {
+			String dbUser = "userExample";
+            String usrPass = "passExample";
+            Class.forName("org.mariadb.jdbc.Driver");
+
+            Connection con = null;
+            
+         
+
+            String url = "jdbc:mariadb://localhost/mydbxml";
+
+            con = DriverManager.getConnection(url, dbUser, usrPass);
+
+            Statement stmt = con.createStatement();     
+           
+                      
+            String query = " insert into players (name, club, position, market_value, nationality)"
+                    + " values (?, ?, ?, ?, ?)";
+
+                  // create the mysql insert preparedstatement
+                  PreparedStatement preparedStmt = con.prepareStatement(query);
+                  preparedStmt.setString (1, p.getName());
+                  preparedStmt.setString (2, p.getClub());
+                  preparedStmt.setString (3, p.getPosition());
+                  preparedStmt.setString (4, p.getMarketvalue());
+                  preparedStmt.setString (5, p.getNationality());
+                  preparedStmt.execute();
+
+            stmt.close();
+            con.close();
+            result =true;
+		}
+		catch(Exception ex) {
+//			System.out.println("Cannot Save");
+			result =false;
+		}
+		return result;
+	}
+	
 }
