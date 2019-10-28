@@ -158,7 +158,7 @@ public class AccessDB {
 		data.clear();
 		int count =0;
 		try {
-
+			//SQL syntax of searching '' in SQL mean '
 			if(input.equalsIgnoreCase("'")) {
 				input = "''";
 			}
@@ -260,7 +260,7 @@ public class AccessDB {
 
 			stmt.close();
 			con.close();
-			//        System.out.println("Count: "+count);
+			System.out.println("Count: "+count);
 
 		}
 		catch(Exception ex) {
