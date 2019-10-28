@@ -91,4 +91,50 @@ public class AccessDB {
 		return result;
 	}
 	
+	
+public boolean checkDuplicate(Player p){
+		
+		boolean res = true;
+		try {
+			String dbUser = "userExample";
+            String usrPass = "passExample";
+            Class.forName("org.mariadb.jdbc.Driver");
+
+            Connection con = null;
+
+            String url = "jdbc:mariadb://localhost/mydbxml";
+
+            con = DriverManager.getConnection(url, dbUser, usrPass);
+
+            Statement stmt = con.createStatement();
+            
+            String name = p.getName();
+            String club = p.getClub();
+            String position = p.getPosition();
+            String market_value = p.getMarketvalue();
+            String nationality = p.getNationality();
+    
+            String sql = "select * from players where name = \""+name +"\" and club = \""+club+"\" and position = \""+position+"\""
+            		+ "and market_value = \""+market_value+"\" and nationality = \""+nationality+"\"";
+
+            ResultSet rs = stmt.executeQuery(sql);
+            
+			
+			if(! rs.next()) {
+				res = false;
+				
+			}
+			rs.close();
+            stmt.close();
+            con.close();
+            
+		
+		}
+		catch(Exception ex) {
+//			System.out.println("No Duplicate");
+		}
+		
+		return res;
+	}
+	
 }
