@@ -92,49 +92,181 @@ public class AccessDB {
 	}
 	
 	
-public boolean checkDuplicate(Player p){
-		
+	public boolean checkDuplicate(Player p){
+
 		boolean res = true;
 		try {
 			String dbUser = "userExample";
-            String usrPass = "passExample";
-            Class.forName("org.mariadb.jdbc.Driver");
+			String usrPass = "passExample";
+			Class.forName("org.mariadb.jdbc.Driver");
 
-            Connection con = null;
+			Connection con = null;
 
-            String url = "jdbc:mariadb://localhost/mydbxml";
+			String url = "jdbc:mariadb://localhost/mydbxml";
 
-            con = DriverManager.getConnection(url, dbUser, usrPass);
+			con = DriverManager.getConnection(url, dbUser, usrPass);
 
-            Statement stmt = con.createStatement();
-            
-            String name = p.getName();
-            String club = p.getClub();
-            String position = p.getPosition();
-            String market_value = p.getMarketvalue();
-            String nationality = p.getNationality();
-    
-            String sql = "select * from players where name = \""+name +"\" and club = \""+club+"\" and position = \""+position+"\""
-            		+ "and market_value = \""+market_value+"\" and nationality = \""+nationality+"\"";
+			Statement stmt = con.createStatement();
 
-            ResultSet rs = stmt.executeQuery(sql);
-            
-			
+			String name = p.getName();
+			String club = p.getClub();
+			String position = p.getPosition();
+			String market_value = p.getMarketvalue();
+			String nationality = p.getNationality();
+
+			String sql = "select * from players where name = \""+name +"\" and club = \""+club+"\" and position = \""+position+"\""
+					+ "and market_value = \""+market_value+"\" and nationality = \""+nationality+"\"";
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+
 			if(! rs.next()) {
 				res = false;
-				
+
 			}
 			rs.close();
-            stmt.close();
-            con.close();
-            
-		
+			stmt.close();
+			con.close();
+
+
 		}
 		catch(Exception ex) {
-//			System.out.println("No Duplicate");
+			//			System.out.println("No Duplicate");
 		}
-		
+
 		return res;
 	}
-	
+
+
+	public boolean checkDuplicateArray(ArrayList<Player> data, Player p) {
+
+		for(Player player: data) {
+			if(p.getName().equalsIgnoreCase(player.getName())&&
+					p.getClub().equalsIgnoreCase(player.getClub())&&
+					p.getPosition().equalsIgnoreCase(player.getPosition())&&
+					p.getMarketvalue().equalsIgnoreCase(player.getMarketvalue())&&
+					p.getNationality().equalsIgnoreCase(player.getNationality())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public ArrayList<Player> filterCountItem(String input,String dbUser,String usrPass) {
+		ArrayList<Player> data = new ArrayList<Player>();
+		data.clear();
+		int count =0;
+		try {
+
+			if(input.equalsIgnoreCase("'")) {
+				input = "''";
+			}
+
+			if(input.equalsIgnoreCase("'''")||
+					input.equalsIgnoreCase("''''")||
+					input.equalsIgnoreCase("'''''")||
+					input.equalsIgnoreCase("''''''")||
+					input.equalsIgnoreCase("'''''''")) {
+				input = "error.......@$@$@$@^%^%#%%";
+			}
+
+
+			Class.forName("org.mariadb.jdbc.Driver");
+
+			Connection con = null;
+
+			String url = "jdbc:mariadb://localhost/mydbxml";
+
+			con = DriverManager.getConnection(url, dbUser, usrPass);
+
+			Statement stmt = con.createStatement();
+
+			String sql = "select * from players where name like '%"+input+"%'";
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			while(rs.next())
+			{
+				Player p = new Player(rs.getString("name"),rs.getString("club"),rs.getString("position"),rs.getString("market_value"),rs.getString("nationality"));
+				if(!checkDuplicateArray(data,p)) {
+					data.add(p);
+					count++;
+				}
+
+			}
+			rs.close();
+
+
+			sql = "select * from players where club like '%"+input+"%'";
+
+			rs = stmt.executeQuery(sql);
+
+			while(rs.next())
+			{
+				Player p = new Player(rs.getString("name"),rs.getString("club"),rs.getString("position"),rs.getString("market_value"),rs.getString("nationality"));
+				if(!checkDuplicateArray(data,p)) {
+					data.add(p);
+					count++;
+				}
+
+			}
+			rs.close();
+
+			sql = "select * from players where position like '%"+input+"%'";
+
+			rs = stmt.executeQuery(sql);
+
+			while(rs.next())
+			{
+				Player p = new Player(rs.getString("name"),rs.getString("club"),rs.getString("position"),rs.getString("market_value"),rs.getString("nationality"));
+				if(!checkDuplicateArray(data,p)) {
+					data.add(p);
+					count++;
+				}
+
+			}
+			rs.close();
+
+			sql = "select * from players where market_value like '%"+input+"%'";
+
+			rs = stmt.executeQuery(sql);
+
+			while(rs.next())
+			{
+				Player p = new Player(rs.getString("name"),rs.getString("club"),rs.getString("position"),rs.getString("market_value"),rs.getString("nationality"));
+				if(!checkDuplicateArray(data,p)) {
+					data.add(p);
+					count++;
+				}
+
+			}
+			rs.close();
+
+			sql = "select * from players where nationality like '%"+input+"%'";
+
+			rs = stmt.executeQuery(sql);
+
+			while(rs.next())
+			{
+				Player p = new Player(rs.getString("name"),rs.getString("club"),rs.getString("position"),rs.getString("market_value"),rs.getString("nationality"));
+				if(!checkDuplicateArray(data,p)) {
+					data.add(p);
+					count++;
+				}
+
+			}
+			rs.close();
+
+			stmt.close();
+			con.close();
+			//        System.out.println("Count: "+count);
+
+		}
+		catch(Exception ex) {
+			//		ex.printStackTrace();
+		}
+		return data;
+	}
+
 }
